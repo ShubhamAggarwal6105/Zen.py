@@ -1,5 +1,5 @@
 import pygame
-from backtracking_text import *
+from backtracking import *
 pygame.init()
 
 WHITE = (255, 255, 255)
