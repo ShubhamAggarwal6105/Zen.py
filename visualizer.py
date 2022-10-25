@@ -119,7 +119,6 @@ class Main:
                     _fs = _fsurf.get_width(), _fsurf.get_height()
                     self._display.blit(_fsurf,
                         (y * self._cwid + (self._cwid // 2) - _fs[0] // 2, x * self._cwid + (self._cwid // 2) - _fs[1] // 2)) 
-
                 except:
                     pass
 
@@ -135,13 +134,6 @@ class Main:
         _frsurf = self._disfont.render("FPS: %d" % self._clock.get_fps(), 1, WHITE)
         self._display.blit(_frsurf, (0, 505))
 
-    def _isempty(self, grid):
-        for i in grid:
-            for j in i:
-                if j==" ": return True
-
-        return False
-
     def run(self):
         while True:
             self._display.fill((0, 0, 0))
@@ -153,7 +145,7 @@ class Main:
                     self._ = None
 
                     if self.temp != "none":
-                        if not self._isempty(self.grid) and validBoard(self.grid):
+                        if not is_empty(self.grid) and validBoard(self.grid):
                             print("valid solution done")
 
                         else:
