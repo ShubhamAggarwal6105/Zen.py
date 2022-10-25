@@ -1,5 +1,9 @@
+
 import pygame
-from backtracking import *
+
+from backtracking_text import *
+from tkinter.messagebox import showerror
+
 pygame.init()
 
 WHITE = (255, 255, 255)
@@ -9,6 +13,7 @@ RED   = (255, 0, 0)
 
 def _flatten(_cls):
     pass
+
 
 class Button:
     def __init__(self, surface, text, font, _border, _borderwidth, fore, back,_pos, command):
@@ -77,6 +82,10 @@ class Main:
             ]
 
         self._solve = Button(self._display, "Solve", self._disfont, GREEN, 1, WHITE, BLACK, (10, 600), self._on_c_solve)
+        self.clear  = Button(self._display, "Clear", self._disfont, GREEN, 1, WHITE, BLACK, (10, 640), self.reset)
+
+    def reset(self,):
+        self.grid = [[" " for i in range(9)] for j in range(9)]
 
     def _draw_cell(self, _color, _gpos, _w):
         pygame.draw.rect(self._display, _color,
@@ -92,12 +101,15 @@ class Main:
             pass
 
     def _on_c_solve(self):
-        print(self.grid, "\n\n\n\n\n", sep="\n")
+        self._started = True
+
         if Solve(self.grid, 0, 0):
             print(self.grid)
 
         else:
-            print("no solution!")
+            showerror("Error!", "There exists no solution to this position.")
+
+        self._started = False
 
     def _render_board(self):
         if self._curcell is not None:
@@ -128,46 +140,48 @@ class Main:
             self._display.fill((0, 0, 0))
 
             for event in pygame.event.get():
-                self._solve.handle_events(event)
-
                 if event.type == pygame.QUIT:
                     pygame.quit()
 
-                if not self._started:
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        m = pygame.mouse.get_pos()
-                        c = [int(m[0] // self._cwid), int(m[1] // self._cwid)]
+                if not self._started:                    
+                    self._solve.handle_events(event)
+                    self.clear.handle_events(event)
 
-                        if (c[0] >= 0 and c[0] <= 8 and c[1] >= 0 and c[1] <= 8):
-                            self._curcell = c
-                            print(self._curcell)
-                    
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_LALT:
-                            self._hasalt = True
+                    if not self._started:
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            m = pygame.mouse.get_pos()
+                            c = [int(m[0] // self._cwid), int(m[1] // self._cwid)]
 
-                        if event.key == pygame.K_RETURN:
+                            if (c[0] >= 0 and c[0] <= 8 and c[1] >= 0 and c[1] <= 8):
+                                self._curcell = c
+                        
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_LALT:
+                                self._hasalt = True
+
+                            if event.key == pygame.K_RETURN:
+                                if self._hasalt:
+                                    self._solve.command()
+
+                            if self._curcell is not None:
+                                if event.key in self._lkeys:
+                                    self.grid[self._curcell[1]][self._curcell[0]] = int(event.unicode)
+
+                                if event.key == pygame.K_BACKSPACE:
+                                    self.grid[self._curcell[1]][self._curcell[0]] = " "
+
+                                if event.key == pygame.K_ESCAPE:
+                                    self._curcell = None
+
+                        if event.type == pygame.KEYUP:
                             if self._hasalt:
-                                self._solve.command()
-
-                        if self._curcell is not None:
-                            if event.key in self._lkeys:
-                                self.grid[self._curcell[1]][self._curcell[0]] = event.unicode
-
-                            if event.key == pygame.K_BACKSPACE:
-                                self.grid[self._curcell[1]][self._curcell[0]] = " "
-
-                            if event.key == pygame.K_ESCAPE:
-                                self._curcell = None
-
-                    if event.type == pygame.KEYUP:
-                        if self._hasalt:
-                            self._hasalt = False
+                                self._hasalt = False
 
             self._r_high()
             self._render_board()
             self._r_info()
             self._solve.Draw()
+            self.clear.Draw()
             self._clock.tick(self._frames)
             pygame.display.flip()
 
