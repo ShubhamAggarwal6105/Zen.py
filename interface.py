@@ -1,5 +1,5 @@
 import pygame, threading, time
-from Algo import *
+from backtracking_text import *
 
 pygame.init()
 
@@ -104,10 +104,6 @@ class Main:
     def _on_c_solve(self):
         self.start = time.time()
         self._started = True
-
-        pygame.display.set_caption("Solving ...")
-        self._display.fill((0, 0, 0))
-
         self.temp = self._SolveSudoku(self.grid, [])
 
     def _render_board(self):
