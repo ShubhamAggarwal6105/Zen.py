@@ -8,10 +8,6 @@ GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 RED   = (255, 0, 0)
 
-def _flatten(_cls):
-    pass
-
-
 class Button:
     def __init__(self, surface, text, font, _border, _borderwidth, fore, back,_pos, command):
         self.surface = surface
