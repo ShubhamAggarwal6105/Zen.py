@@ -50,7 +50,7 @@ class Button:
     def handle_events(self, event):
         _p = pygame.mouse.get_pos()
         if (_p[0] > self.pos[0] and _p[0] < self.pos[0] + self.width) and\
-            (_p[1] > self.pos[1] and _p[1] < self.pos[1] + self.width):
+            (_p[1] > self.pos[1] and _p[1] < self.pos[1] + self.height):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.command()
 
@@ -85,7 +85,8 @@ class Main:
         self.clear  = Button(self._display, "Clear", self._disfont, GREEN, 1, WHITE, BLACK, (10, 640), self.reset)
 
     def reset(self,):
-        self.grid = [[" " for i in range(9)] for j in range(9)]
+        if not self._started:
+            self.grid = [[" " for i in range(9)] for j in range(9)]
 
     def _draw_cell(self, _color, _gpos, _w):
         pygame.draw.rect(self._display, _color,
@@ -102,6 +103,7 @@ class Main:
 
     def _on_c_solve(self):
         self._started = True
+        print("f off")
 
         if Solve(self.grid, 0, 0):
             print(self.grid)
