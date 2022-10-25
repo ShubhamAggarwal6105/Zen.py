@@ -39,7 +39,6 @@ class Button:
     def Draw(self, padx = 0, pady = 0):
         self.__initR()
         _px, _py = padx if padx is not None else 0, pady if pady is not None else 0
-        
         pygame.draw.rect(self.surface, self.bg, self.rect)
         pygame.draw.rect(self.surface, self.border, self.rect, self._borderwidth)
         
@@ -53,7 +52,6 @@ class Button:
             (_p[1] > self.pos[1] and _p[1] < self.pos[1] + self.height):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.command()
-
 class Main:
     def __init__(self):
         self._init_display()
@@ -67,7 +65,6 @@ class Main:
     def _init_runtime_vars(self):
         self._frames = 1000
         self.grid = [[" " for i in range(9)] for j in range(9)] # (cell_x, cell_y) : _value
-
         self._started = False
         self._hasalt = False
 
@@ -78,8 +75,7 @@ class Main:
         self._lkeys = [
             pygame.K_1, pygame.K_2, pygame.K_3, 
             pygame.K_4, pygame.K_5, pygame.K_6,
-            pygame.K_7, pygame.K_8, pygame.K_9
-            ]
+            pygame.K_7, pygame.K_8, pygame.K_9]
 
         self._solve = Button(self._display, "Solve", self._disfont, GREEN, 1, WHITE, BLACK, (10, 600), self._on_c_solve)
         self.clear  = Button(self._display, "Clear", self._disfont, GREEN, 1, WHITE, BLACK, (10, 640), self.reset)
@@ -89,8 +85,7 @@ class Main:
             self.grid = [[" " for i in range(9)] for j in range(9)]
 
     def _draw_cell(self, _color, _gpos, _w):
-        pygame.draw.rect(self._display, _color,
-                    (_gpos[0] * self._cwid, _gpos[1] * self._cwid, self._cwid, self._cwid), _w)
+        pygame.draw.rect(self._display, _color, (_gpos[0] * self._cwid, _gpos[1] * self._cwid, self._cwid, self._cwid), _w)
 
     def _r_high(self, ):
         try:
@@ -98,13 +93,10 @@ class Main:
             _c = [i // self._cwid for i in pos]
             if not (_c[0] > 8 or _c[1] > 8 or _c[0] < 0 or _c[1] < 0):
                 self._draw_cell(RED, _c, 5)
-        except:
-            pass
+        except: pass
 
     def _on_c_solve(self):
         self._started = True
-        print("f off")
-
         if Solve(self.grid, 0, 0):
             print(self.grid)
 
