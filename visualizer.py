@@ -1,4 +1,4 @@
-import pygame
+import pygame, threading
 from backtracking_text import *
 
 pygame.init()
@@ -20,7 +20,7 @@ class Button:
         self.font = font
         self.border = _border
         self._borderwidth = _borderwidth
-        self.fg = self.foreground = fore
+        self.fg = self.foreground = fore    
         self.bg = self.background = back
         self.cmd = self.command = command
         self.pos = self.position = _pos
@@ -64,9 +64,10 @@ class Main:
     def _init_runtime_vars(self):
         self._frames = 1000
         self.grid = [[" " for i in range(9)] for j in range(9)] # (cell_x, cell_y) : _value
-
+        self._ = None
         self._started = False
         self._hasalt = False
+        self.temp = "none"
 
         self._cwid = 500 / 9
         self._sysfont = pygame.font.SysFont("Consolas", 45)
@@ -89,6 +90,11 @@ class Main:
         pygame.draw.rect(self._display, _color,
                     (_gpos[0] * self._cwid, _gpos[1] * self._cwid, self._cwid, self._cwid), _w)
 
+    def _SolveSudoku(self, grid, possible):
+        self._ = threading.Thread(target= lambda: foo(grid, possible))
+        self._.daemon = True
+        self._.start()
+
     def _r_high(self, ):
         try:
             pos = pygame.mouse.get_pos()
@@ -101,19 +107,10 @@ class Main:
     def _on_c_solve(self):
         self._started = True
 
-        if int(self.grid[0][0]) == 1:
-            _issolv = self._disfont.render("Solving...", 1, (0, 255, 0))
-            self._display.blit(_issolv, (0, 550))
-            pygame.display.flip()
-            print(self.grid)
+        pygame.display.set_caption("Solving ...")
+        self._display.fill((0, 0, 0))
 
-        else:
-            _stderr = self._disfont.render("No Solution!", 1, (255, 0, 0))
-            self._display.blit(_stderr, (0, 550))
-            pygame.display.flip()
-
-        pygame.time.delay(2000)
-        self._started = False
+        self.temp = self._SolveSudoku(self.grid, [])
 
     def _render_board(self):
         if self._curcell is not None:
@@ -121,10 +118,14 @@ class Main:
         
         for x in range(9):
             for y in range(9):
-                _fsurf = self._sysfont.render(str(self.grid[x][y]), 1, WHITE)
-                _fs = _fsurf.get_width(), _fsurf.get_height()
-                self._display.blit(_fsurf,
-                    (y * self._cwid + (self._cwid // 2) - _fs[0] // 2, x * self._cwid + (self._cwid // 2) - _fs[1] // 2)) 
+                try:
+                    _fsurf = self._sysfont.render(str(self.grid[x][y]), 1, WHITE)
+                    _fs = _fsurf.get_width(), _fsurf.get_height()
+                    self._display.blit(_fsurf,
+                        (y * self._cwid + (self._cwid // 2) - _fs[0] // 2, x * self._cwid + (self._cwid // 2) - _fs[1] // 2)) 
+
+                except:
+                    pass
 
         for i in range(4):
             pygame.draw.line(self._display, WHITE, (0, i * 166.7), (500, i * 166.7), 5) # horizontal
@@ -134,59 +135,91 @@ class Main:
             pygame.draw.line(self._display, WHITE, (0, j * self._cwid), (500, j * self._cwid), 1)
             pygame.draw.line(self._display, WHITE, (j * self._cwid, 0), (j * self._cwid, 500), 1)
 
-
     def _r_info(self):
         _frsurf = self._disfont.render("FPS: %d" % self._clock.get_fps(), 1, WHITE)
         self._display.blit(_frsurf, (0, 505))
+
+    def _isempty(self, grid):
+        for i in grid:
+            for j in i:
+                if j==" ": return True
+
+        return False
 
     def run(self):
         while True:
             self._display.fill((0, 0, 0))
 
+            if (self._ is not None):
+                if not (self._.is_alive()):
+                    print("solving done")
+                    self._started = False
+                    self._ = None
+
+                    if self.temp != "none":
+                        if not self._isempty(self.grid) and validBoard(self.grid):
+                            print("valid solution done")
+
+                        else:
+                            print("no solution")
+                            _stderr = self._disfont.render("No Solution!", 1, (255, 0, 0))
+                            self._display.blit(_stderr, (0, 550))
+                            pygame.display.flip()
+
+                        pygame.time.delay(2000)
+                        self.temp = "none"
+                
+                else:
+                    _issolv = self._disfont.render("Solving...", 1, (0, 255, 0))
+                    self._display.blit(_issolv, (0, 550))
+                    pygame.display.flip()
+
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
 
-                if not self._started:                    
+                if not self._started:  
                     self._solve.handle_events(event)
                     self.clear.handle_events(event)
 
-                    if not self._started:
-                        if event.type == pygame.MOUSEBUTTONDOWN:
-                            m = pygame.mouse.get_pos()
-                            c = [int(m[0] // self._cwid), int(m[1] // self._cwid)]
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        m = pygame.mouse.get_pos()
+                        c = [int(m[0] // self._cwid), int(m[1] // self._cwid)]
 
-                            if (c[0] >= 0 and c[0] <= 8 and c[1] >= 0 and c[1] <= 8):
-                                self._curcell = c
-                        
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_LALT:
-                                self._hasalt = True
+                        if (c[0] >= 0 and c[0] <= 8 and c[1] >= 0 and c[1] <= 8):
+                            self._curcell = c
+                    
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_LALT:
+                            self._hasalt = True
 
-                            if event.key == pygame.K_RETURN:
-                                if self._hasalt:
-                                    self._solve.command()
-
-                            if self._curcell is not None:
-                                if event.key in self._lkeys:
-                                    self.grid[self._curcell[1]][self._curcell[0]] = int(event.unicode)
-
-                                if event.key == pygame.K_BACKSPACE:
-                                    self.grid[self._curcell[1]][self._curcell[0]] = " "
-
-                                if event.key == pygame.K_ESCAPE:
-                                    self._curcell = None
-
-                        if event.type == pygame.KEYUP:
+                        if event.key == pygame.K_RETURN:
                             if self._hasalt:
-                                self._hasalt = False
+                                self._solve.command()
 
-            self._r_high()
-            self._render_board()
-            self._r_info()
-            self._solve.Draw()
-            self.clear.Draw()
-            self._clock.tick(self._frames)
-            pygame.display.flip()
+                        if self._curcell is not None:
+                            if event.key in self._lkeys:
+                                self.grid[self._curcell[1]][self._curcell[0]] = int(event.unicode)
+
+                            if event.key == pygame.K_BACKSPACE:
+                                self.grid[self._curcell[1]][self._curcell[0]] = " "
+
+                            if event.key == pygame.K_ESCAPE:
+                                self._curcell = None
+
+                    if event.type == pygame.KEYUP:
+                        if self._hasalt:
+                            self._hasalt = False
+
+            if not self._started:
+                self._r_high()
+                self._render_board()
+                self._r_info()
+                self._solve.Draw()
+                self.clear.Draw()
+
+                self._clock.tick(self._frames)
+                pygame.display.flip()
 
 Main().run()
