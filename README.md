@@ -7,14 +7,14 @@ To run the algorithm with the integrated interface, run `interface.py`.
 
 # Requirements:
 1. The core text-based algorithm needs a Python 3.x install; no modules / external dependencies are needed.
-2. The Interface version needs [Pygame (2.x)](https://www.pygame.org/wiki/about) and [threading](https://docs.python.org/3/library/threading.html).
+2. The Interface version needs [Pygame (2.x)](https://www.pygame.org/wiki/about), [threading](https://docs.python.org/3/library/threading.html), [time](https://docs.python.org/3/library/time.html).
 
 # The Interface:
 It uses Pygame to render the sudoku board as a 9x9 grid. The cells can be interacted with, by clicking on them, and clicking 1-9 on the keyboard, that changes value of that particular cell.
 The "Solve" button runs the core algorithm whilst keeping the window up, and "Clear Board" does what it says, verbatim.
 
 # Efficiency:
-The algorithm has treads away from a traditional approach to solving the sudoku boards. It is faster than isolated Backtracking for positions where a unique solution exists.
+The algorithm steps a bit away from a traditional approach to solving the sudoku boards. It is faster than isolated Backtracking for positions where a unique solution exists.
 
 # How the Algorithm works:
 1) It stores a 2D array of all possible elements that can be filled in a cell according to sudoku rules.
@@ -24,6 +24,8 @@ The algorithm has treads away from a traditional approach to solving the sudoku 
 
 # Dependency usage:
 Pygame is used for rendering absolutely everything on the screen. Threading is essential, for the algorithm run times may vary, and if the pygame window instance does not get updated per frame, there is a huge possibility that it will crash and / or become unresponsive. As a result, the algorithm runs in a separate native thread, whilst the window stays up. 
+
+`time` is used for measuring the time taken by the core algorithm in solving a particular position.
 
 # The program in-action:
 `NOTE: The program runs at a crisp 700+ FPS on an average on Windows (Not clocked).`
