@@ -102,9 +102,10 @@ class Main:
 
         if Solve(self.grid, 0, 0):
             print(self.grid)
+            _hassolved = self._disfont.render("Solved!", 1, (0, 255, 0))
+            self._display.blit(_hassolved, (0, 550))
 
         else:
-            pygame.display.set_caption("No solution!")
             _stderr = self._disfont.render("No Solution!", 1, (255, 0, 0))
             self._display.blit(_stderr, (0, 550))
 
