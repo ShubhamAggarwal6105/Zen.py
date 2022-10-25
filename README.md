@@ -1,4 +1,6 @@
 # Zen.py
+![image](https://user-images.githubusercontent.com/112420208/197792287-f2b8f6fb-d5bb-4b17-afa0-79de1c99dd7f.png)
+
 Sudoku solver, with a simple, crisp user-interface.
 
 # Running the algorithm:
