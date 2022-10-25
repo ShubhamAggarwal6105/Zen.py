@@ -7,7 +7,7 @@ def Col(x):
 def Box(x):
     I,J = 3*(x//3),3*(x%3)
     return [[i+I,j+J] for j in range(3) for i in range(3)]
-#
+
 def Check(grid,i,j, possible):
     for a,b in Row(i):
         x = possible[a][b]
@@ -118,80 +118,44 @@ def main(grid, possible):
         if temp_grid == grid: return True
         temp_grid = [i[:] for i in grid]
 
-########################################
-
-N = 9
-
-def notInRow(arr, row):
-    st = set()
-    for i in range(0, 9):
-        if arr[row][i] in st:
-            return False
-        if arr[row][i] != ' ':
-            st.add(arr[row][i])
-    return True
-
-def notInCol(arr, col): 
-    st = set()
-    for i in range(0, 9):
-        if arr[i][col] in st:
-            return False
-        if arr[i][col] != ' ':
-            st.add(arr[i][col])
-    return True
-
-def notInBox(arr, startRow, startCol):
-    st = set()
-    for row in range(0, 3):
-        for col in range(0, 3):
-            curr = arr[row + startRow][col + startCol]
-            if curr in st:
-                return False
-            if curr != ' ':
-                st.add(curr)
-    return True
- 
 def validBoard(arr):
-    for row in range(0, 9):
-        for col in range(0, 9):
-            if not (notInRow(arr, row) and notInCol(arr, col) and\
-            notInBox(arr, row - row % 3, col - col % 3)):
-                return False
-    return True
-            
-
-def isSafe(grid, row, col, num):
     for x in range(9):
-        if grid[row][x] == num:
-            return False
-    for x in range(9):
-        if grid[x][col] == num:
-            return False
-    startRow = row - row % 3
-    startCol = col - col % 3
-    for i in range(3):
-        for j in range(3):
-            if grid[i + startRow][j + startCol] == num:
-                return False
+        s = set()
+        for i,j in Row(x):
+            if arr[i][j] in s: return False
+            if arr[i][j] != ' ': s.add(arr[i][j])
+        s = set()
+        for i,j in Col(x):
+            if arr[i][j] in s: return False
+            if arr[i][j] != ' ': s.add(arr[i][j])
+        s = set()
+        for i,j in Box(x):
+            if arr[i][j] in s: return False
+            if arr[i][j] != ' ': s.add(arr[i][j])
     return True
 
-def Solve(grid, row, col, possible):
-    if not validBoard(grid):
-        return False
-    if (row == 8 and col == 9):
-        return True
-    if col == N:
-        row += 1
-        col = 0
-    if grid[row][col] != " ":
-        return Solve(grid, row, col + 1, possible)
+def safe(grid, r, c, num):
+    for a,b in Row(r):
+        if grid[a][b]==num: return False
+    for a,b in Col(c):
+        if grid[a][b]==num: return False
+    for a,b in Box((c//3)+3*(r//3)):
+        if grid[a][b]==num: return False
+    return True
 
-    for num in possible[row][col]:
-        if isSafe(grid, row, col, num):
-            grid[row][col] = num
-            if Solve(grid, row, col + 1, possible):
-                return True
-        grid[row][col] = " "
+def Solve(grid, r, c, possible):
+    if not validBoard(grid): return False
+    if (r == 8 and c == 9): return True
+    if c == 9:
+        r+=1
+        c=0
+    if grid[r][c] != " ":
+        return Solve(grid, r, c+1, possible)
+    for num in possible[r][c]:
+        if safe(grid, r, c, num):
+            grid[r][c] = num
+            if Solve(grid, r, c+1, possible): return True
+        grid[r][c] = " "
     return False
 
 def foo(grid, possible):
