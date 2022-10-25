@@ -1,4 +1,4 @@
-import pygame, threading
+import pygame, threading, time
 from Algo import *
 
 pygame.init()
@@ -64,6 +64,7 @@ class Main:
         self._started = False
         self._hasalt = False
         self.temp = "none"
+        self.start, self.end = None, None
 
         self._cwid = 500 / 9
         self._sysfont = pygame.font.SysFont("Consolas", 45)
@@ -101,6 +102,7 @@ class Main:
             pass
 
     def _on_c_solve(self):
+        self.start = time.time()
         self._started = True
 
         pygame.display.set_caption("Solving ...")
@@ -140,7 +142,7 @@ class Main:
 
             if (self._ is not None):
                 if not (self._.is_alive()):
-                    print("solving done")
+                    print("solving done. ")
                     self._started = False
                     self._ = None
 
@@ -154,7 +156,11 @@ class Main:
                             self._display.blit(_stderr, (0, 550))
                             pygame.display.flip()
 
-                        pygame.time.delay(2000)
+                        self.end = time.time()
+                        print("Time Elapsed since algorithm start: %f seconds" % (self.end - self.start))
+                        self.start, self.end = None, None
+
+                        # pygame.time.delay(2000)
                         self.temp = "none"
                 
                 else:
