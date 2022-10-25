@@ -1,5 +1,6 @@
 import pygame
 from backtracking_text import *
+
 pygame.init()
 
 WHITE = (255, 255, 255)
@@ -100,16 +101,18 @@ class Main:
     def _on_c_solve(self):
         self._started = True
 
-        if Solve(self.grid, 0, 0):
+        if int(self.grid[0][0]) == 1:
+            _issolv = self._disfont.render("Solving...", 1, (0, 255, 0))
+            self._display.blit(_issolv, (0, 550))
+            pygame.display.flip()
             print(self.grid)
-            _hassolved = self._disfont.render("Solved!", 1, (0, 255, 0))
-            self._display.blit(_hassolved, (0, 550))
 
         else:
             _stderr = self._disfont.render("No Solution!", 1, (255, 0, 0))
             self._display.blit(_stderr, (0, 550))
+            pygame.display.flip()
 
-        pygame.time.delay(1000)
+        pygame.time.delay(2000)
         self._started = False
 
     def _render_board(self):
