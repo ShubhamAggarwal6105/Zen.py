@@ -23,7 +23,7 @@ The algorithm steps a bit away from a traditional approach to solving the sudoku
 4) It uses backtracking to further solve the sudoku board when it can't find any singletons or unique elements.
 
 # Dependency usage:
-Pygame is used for rendering absolutely everything on the screen. Threading is essential, for the algorithm run times may vary, and if the pygame window instance does not get updated per frame, there is a huge possibility that it will crash and / or become unresponsive. As a result, the algorithm runs in a separate native thread, whilst the window stays up. 
+`Pygame` is used for rendering absolutely everything on the screen. `Threading` (for parallelism) is essential, for the algorithm run times may vary, and if the pygame window instance does not get updated per frame, there is a huge possibility that it will crash and / or become unresponsive. As a result, the algorithm runs in a separate native thread, whilst the window stays up. 
 
 `time` is used for measuring the time taken by the core algorithm in solving a particular position.
 
